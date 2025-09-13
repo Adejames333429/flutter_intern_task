@@ -1,19 +1,33 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'dart:convert';
 
-class PostsScreen extends StatelessWidget {
-  const PostsScreen({super.key});
+class PostsScreen extends StatefulWidget {
+  @override
+  _PostsScreenState createState() => _PostsScreenState();
+}
 
-  Future<List<dynamic>> fetchPosts() async {
+class _PostsScreenState extends State<PostsScreen> {
+  List posts = [];
+
+  @override
+  void initState() {
+    super.initState();
+    fetchPosts(); // call it when widget loads
+  }
+
+  Future<void> fetchPosts() async {
     final response = await http.get(
-      Uri.parse('https://jsonplaceholder.typicode.com/posts'),
+      Uri.parse("https://jsonplaceholder.typicode.com/posts"),
+      headers: {"User-Agent": "FlutterApp/1.0", "Accept": "application/json"},
     );
 
     if (response.statusCode == 200) {
-      return json.decode(response.body);
+      setState(() {
+        posts = json.decode(response.body);
+      });
     } else {
-      throw Exception("Failed to load posts");
+      print("Failed to load posts: ${response.statusCode}");
     }
   }
 
@@ -21,28 +35,18 @@ class PostsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text("Posts")),
-      body: FutureBuilder<List<dynamic>>(
-        future: fetchPosts(),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: CircularProgressIndicator());
-          } else if (snapshot.hasError) {
-            return Center(child: Text("Error: ${snapshot.error}"));
-          } else {
-            final posts = snapshot.data!;
-            return ListView.builder(
-              itemCount: posts.length,
-              itemBuilder: (context, index) {
-                final post = posts[index];
-                return ListTile(
-                  title: Text(post['title']),
-                  subtitle: Text(post['body']),
-                );
-              },
-            );
-          }
-        },
-      ),
+      body:
+          posts.isEmpty
+              ? Center(child: CircularProgressIndicator())
+              : ListView.builder(
+                itemCount: posts.length,
+                itemBuilder: (context, index) {
+                  return ListTile(
+                    title: Text(posts[index]["title"]),
+                    subtitle: Text(posts[index]["body"]),
+                  );
+                },
+              ),
     );
   }
 }
