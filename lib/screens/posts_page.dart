@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import '../data/notifier.dart';
 
 class PostsPage extends StatefulWidget {
   final Map user;
@@ -46,23 +47,23 @@ class _PostsPageState extends State<PostsPage> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final isDarkMode = theme.brightness == Brightness.dark;
+
     return Scaffold(
       body:
           loading
               ? const Center(child: CircularProgressIndicator())
               : Stack(
                 children: [
-                  // Background image
+                  // Background image with gradient
                   SizedBox(
                     height: MediaQuery.of(context).size.height * 0.60,
                     width: double.infinity,
                     child: Stack(
                       fit: StackFit.expand,
                       children: [
-                        Image.asset(
-                          widget.backgroundImage, // use selected image
-                          fit: BoxFit.cover,
-                        ),
+                        Image.asset(widget.backgroundImage, fit: BoxFit.cover),
                         Container(
                           decoration: BoxDecoration(
                             gradient: LinearGradient(
@@ -82,30 +83,30 @@ class _PostsPageState extends State<PostsPage> {
                   // Top icons
                   Positioned(
                     top: 20.0,
-                    left: 10.0,
+                    left: 20.0,
                     right: 10.0,
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         CircleAvatar(
                           radius: 12.0,
-                          backgroundColor: const Color(0xFFF4F4F4),
+                          backgroundColor: theme.scaffoldBackgroundColor,
                           child: IconButton(
                             padding: EdgeInsets.zero,
                             constraints: const BoxConstraints(maxWidth: 10.0),
                             onPressed: () => Navigator.pop(context),
-                            icon: const Icon(
+                            icon: Icon(
                               Icons.arrow_back_ios,
                               size: 15.0,
-                              color: Color(0xFF000000),
+                              color: theme.iconTheme.color,
                             ),
                           ),
                         ),
                         IconButton(
                           onPressed: () {},
-                          icon: const Icon(
+                          icon: Icon(
                             Icons.bookmark_border,
-                            size: 15,
+                            size: 20,
                             color: Colors.white,
                           ),
                         ),
@@ -113,7 +114,7 @@ class _PostsPageState extends State<PostsPage> {
                     ),
                   ),
 
-                  // Top card: user email
+                  // Top card: user info
                   Padding(
                     padding: const EdgeInsets.only(
                       top: 260.0,
@@ -125,42 +126,41 @@ class _PostsPageState extends State<PostsPage> {
                       children: [
                         Text(
                           'Passeios em veneza: como gastar economizar',
-                          style: const TextStyle(
+                          style: theme.textTheme.headlineSmall?.copyWith(
                             color: Colors.white,
-                            fontSize: 26.0,
                             fontWeight: FontWeight.w600,
-                            height: 1.4,
-                            fontFamily: 'Poppins',
                           ),
                         ),
                         const SizedBox(height: 10),
                         Row(
                           children: [
-                            const CircleAvatar(radius: 8.0),
+                            CircleAvatar(
+                              radius: 8.0,
+                              backgroundColor:
+                                  isDarkMode
+                                      ? Colors.grey[800]
+                                      : Colors.grey[300],
+                            ),
                             const SizedBox(width: 8),
                             Text(
-                              widget.user['username'], // now shows the username
-                              style: const TextStyle(
-                                fontFamily: 'Poppins',
+                              widget.user['username'],
+                              style: theme.textTheme.bodyMedium?.copyWith(
+                                color: Colors.grey[300],
                                 fontSize: 12,
-                                fontWeight: FontWeight.w500,
-                                color: Color(0xFFCECDCD),
                               ),
                             ),
                             const SizedBox(width: 15.0),
-                            const Icon(
+                            Icon(
                               Icons.access_time,
-                              color: Color(0xFFCECDCD),
+                              color: Colors.grey[400],
                               size: 18,
                             ),
                             const SizedBox(width: 8),
-                            const Text(
+                            Text(
                               '5min',
-                              style: TextStyle(
-                                fontFamily: 'Poppins',
+                              style: theme.textTheme.bodyMedium?.copyWith(
+                                color: Colors.grey[500],
                                 fontSize: 12,
-                                fontWeight: FontWeight.w500,
-                                color: Color(0xFF929292),
                               ),
                             ),
                           ],
@@ -169,14 +169,14 @@ class _PostsPageState extends State<PostsPage> {
                     ),
                   ),
 
-                  // Bottom list of comments
+                  // Bottom comments container
                   Align(
                     alignment: Alignment.bottomCenter,
                     child: Container(
                       height: MediaQuery.of(context).size.height * 0.48,
-                      decoration: const BoxDecoration(
-                        color: Color(0xFFF4F4F4),
-                        borderRadius: BorderRadius.only(
+                      decoration: BoxDecoration(
+                        color: theme.scaffoldBackgroundColor,
+                        borderRadius: const BorderRadius.only(
                           topLeft: Radius.circular(40.0),
                           topRight: Radius.circular(40.0),
                         ),
@@ -188,18 +188,16 @@ class _PostsPageState extends State<PostsPage> {
                           return ListTile(
                             title: Text(
                               comment['email'],
-                              style: const TextStyle(
-                                fontSize: 16.0,
-                                fontFamily: 'Poppins',
+                              style: theme.textTheme.bodyMedium?.copyWith(
                                 fontWeight: FontWeight.w600,
+                                fontSize: 16.0,
                               ),
                             ),
                             subtitle: Text(
                               comment['body'],
-                              style: const TextStyle(
-                                fontSize: 14.0,
-                                fontFamily: 'Poppins',
+                              style: theme.textTheme.bodySmall?.copyWith(
                                 fontWeight: FontWeight.w400,
+                                fontSize: 12.0,
                               ),
                             ),
                           );
@@ -211,16 +209,24 @@ class _PostsPageState extends State<PostsPage> {
               ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {},
-        backgroundColor: Color(0xFFFFFFFF),
+        backgroundColor:
+            theme.floatingActionButtonTheme.backgroundColor ??
+            (isDarkMode ? Colors.grey[900] : Colors.white),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(50.0),
         ),
         child: Padding(
-          padding: EdgeInsets.all(10.0),
+          padding: const EdgeInsets.all(10.0),
           child: Column(
             children: [
               Icon(Icons.favorite, color: Colors.red, size: 16.0),
-              Text('285', style: TextStyle(fontSize: 14.0)),
+              Text(
+                '285',
+                style: theme.textTheme.bodySmall?.copyWith(
+                  color: isDarkMode ? Colors.white : Colors.black,
+                  fontSize: 14.0,
+                ),
+              ),
             ],
           ),
         ),
