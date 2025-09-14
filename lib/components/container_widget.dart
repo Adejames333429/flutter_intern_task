@@ -19,8 +19,23 @@ class ContainerWidget extends StatelessWidget {
           padding: const EdgeInsets.all(10.0),
           margin: const EdgeInsets.only(bottom: 15.0),
           decoration: BoxDecoration(
-            color: isDarkMode ? Color(0xFF151515) : Colors.white,
+            color: isDarkMode ? Colors.black : Colors.white,
             borderRadius: BorderRadius.circular(18.0),
+            // boxShadow: [
+            //   BoxShadow(
+            //     color:
+            //         isDarkMode
+            //             ? Colors.white.withOpacity(
+            //               0.1,
+            //             ) // subtle light shadow in dark mode
+            //             : Colors.black.withOpacity(
+            //               0.1,
+            //             ), // subtle dark shadow in light mode
+            //     offset: const Offset(0, 3), // horizontal, vertical offset
+            //     blurRadius: 6.0, // how soft the shadow is
+            //     spreadRadius: 0.0, // how much the shadow spreads
+            //   ),
+            // ],
           ),
           child: Row(
             children: [

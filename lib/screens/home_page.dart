@@ -44,12 +44,13 @@ class _HomePageState extends State<HomePage> {
       valueListenable: isDarkModeNotifier,
       builder: (context, isDarkMode, child) {
         return Scaffold(
-          backgroundColor: isDarkMode ? Colors.black38 : Color(0xFFF4F4F4),
+          backgroundColor: isDarkMode ? Color(0xFF151515) : Color(0xFFF4F4F4),
           body: NestedScrollView(
             headerSliverBuilder: (context, innerBoxIsScrolled) {
               return [
                 SliverAppBar(
-                  backgroundColor: theme.scaffoldBackgroundColor,
+                  backgroundColor:
+                      isDarkMode ? Color(0xFF151515) : Color(0xFFF4F4F4),
                   floating: true,
                   snap: true,
                   pinned: false,
