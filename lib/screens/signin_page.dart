@@ -56,7 +56,16 @@ class SigninPage extends StatelessWidget {
                     ),
                     SizedBox(height: 10),
                     ElevatedButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) {
+                              return HomePage();
+                            },
+                          ),
+                        );
+                      },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Color(0xFF1E5FDE),
                         padding: EdgeInsets.symmetric(vertical: 16.0),
